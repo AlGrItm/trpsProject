@@ -1,0 +1,12 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block content %}
+  <h3 class="profile-heading">{{ profile }}</h3>
+  {% for realization in realizations %}
+    {% include 'components/realization-item.html' %}
+  {% endfor %}
+
+  {% include 'components/pagination.html' %}
+
+{% endblock %}

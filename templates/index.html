@@ -1,0 +1,12 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="tasks-container">
+    <h3 class="tasks-title">Tasks</h3>
+    {% for task in tasks %}
+      {% include 'components/task-item.html' %}
+    {% endfor %}
+    {% include 'components/pagination.html' %}
+  </div>
+{% endblock %}

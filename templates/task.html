@@ -1,0 +1,21 @@
+{% extends 'layouts/base.html' %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+<div class="split left">
+  <div class="container mt-4">
+    <div class="offset-md-1 col-md-5">
+      <div class="mb-3">
+        <h5>Task name</h5>
+        <p>{{ task.title }}</p>
+      </div>
+      
+      <div class="mb-3">
+        <h5>Task description</h5>
+        <p>{{ task.description }}</p>
+      </div>
+      <button type="button" class="btn btn-primary">Begin</button>
+    </div>
+  </div>
+</div>
+{% endblock %}

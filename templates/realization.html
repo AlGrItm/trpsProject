@@ -1,0 +1,12 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="realization-container">
+    <h2 class="realization-author">Author: {{ realization.author }}</h2>
+    <h3 class="realization-task-title">Task Title: {{ realization.task.title }}</h3>
+    <p class="realization-task-description">Task Description: {{ realization.task.description }}</p>
+    <p class="realization-page-number">Page Number: {{ realization.current_page.number }}</p>
+    <p class="realization-page-text">Page Text: {{ realization.current_page.text }}</p>
+  </div>
+{% endblock %}
