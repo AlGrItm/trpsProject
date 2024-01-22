@@ -1,11 +1,13 @@
 {% load static %}
 
-<div class="realization-item">
-    <img class="avatar-image" src="{% static 'Images/Hombre.png' %}" alt="Avatar" width="40" height="40">
+<div class="realization-item {% if is_last %}last-item{% endif %}">
+    <img class="avatar-image" src="{{ realization.author.avatar.url }}" alt="Avatar" width="40" height="40">
     <div class="details-container">
         <a class="realization-title" href="{% url 'realization' realization.pk %}">{{ realization.task.title }}</a>
         <p class="realization-description">{{ realization.task.description }}</p>
-        <p class="realization-status">Status: {% if realization.completed %}Completed{% else %}Incomplete{% endif %}</p>
+        <p class="realization-status {% if not realization.completed %}incompleted{% endif %}">
+            Status: {% if realization.completed %}Completed{% else %}Incomplete{% endif %}
+        </p>
         {% if not realization.completed %}
             <p class="current-page-info">Current page: {{ realization.current_page.number }}</p>
         {% endif %}

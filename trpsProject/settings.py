@@ -69,7 +69,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'Monitoring.context_processors.profiles',
                 'Monitoring.context_processors.authenticated',
-                'Monitoring.context_processors.tasks'
+                'Monitoring.context_processors.tasks',
             ],
         },
     },

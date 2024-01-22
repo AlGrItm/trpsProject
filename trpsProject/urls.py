@@ -13,4 +13,8 @@ urlpatterns = [
     path('logout/', views.logout, name='logout'),
     path('login/', views.log_in, name='login'),
     path('signup/', views.signup, name='signup'),
+    path('create_page/<int:task_id>/<int:page_number>/', views.create_page, name='create_page'),
+    path('fill/<realization_id>', views.fill, name='fill'),
+    path('begin_fill/', views.begin_fill, name='begin_fill'),
+    path('settings/', views.settings, name='settings'),
 ]

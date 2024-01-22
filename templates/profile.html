@@ -3,10 +3,11 @@
 
 {% block content %}
   <h3 class="profile-heading">{{ profile }}</h3>
-  {% for realization in realizations %}
-    {% include 'components/realization-item.html' %}
+  {% for realization in page_obj %}
+    {% include 'components/realization-item.html' with is_last=forloop.last %}
   {% endfor %}
 
   {% include 'components/pagination.html' %}
 
 {% endblock %}
+

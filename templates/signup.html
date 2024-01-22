@@ -3,72 +3,81 @@
 {% load static %}
 
 {% block content %}
-<div class="container mt-5">
+  <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h3>Registration</h3>
-                </div>
-                <div class="card-body">
-                    <form method="post" class="needs-validation" novalidate>
-                        {% csrf_token %}
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            {% if form.errors %}
+              <div class="alert alert-danger">
+                {% for field, errors in form.errors.items %}
+                  {% for error in errors %}
+                    {{ error }}<br>
+                  {% endfor %}
+                {% endfor %}
+              </div>
+            {% endif %}
+            <h3>Registration</h3>
+          </div>
+          <div class="card-body">
+            <form method="post" class="needs-validation" novalidate>
+              {% csrf_token %}
 
-                        <div class="mb-3">
-                            {{ form.username.label_tag }}
-                            {{ form.username }}
-                            {% if form.username.errors %}
-                                <div class="invalid-feedback">
-                                    {{ form.username.errors|join:", " }}
-                                </div>
-                            {% endif %}
-                        </div>
+              <div class="mb-3">
+                {{ form.username.label_tag }}
+                {{ form.username }}
+                {% if form.username.errors %}
+                  <div class="invalid-feedback">
+                    {{ form.username.errors|join:", " }}
+                  </div>
+                {% endif %}
+              </div>
 
-                        <div class="mb-3">
-                            {{ form.password.label_tag }}
-                            {{ form.password }}
-                            {% if form.password.errors %}
-                                <div class="invalid-feedback">
-                                    {{ form.password.errors|join:", " }}
-                                </div>
-                            {% endif %}
-                        </div>
+              <div class="mb-3">
+                {{ form.password.label_tag }}
+                {{ form.password }}
+                {% if form.password.errors %}
+                  <div class="invalid-feedback">
+                    {{ form.password.errors|join:", " }}
+                  </div>
+                {% endif %}
+              </div>
 
-                        <div class="mb-3">
-                            {{ form.password_check.label_tag }}
-                            {{ form.password_check }}
-                            {% if form.password_check.errors %}
-                                <div class="invalid-feedback">
-                                    {{ form.password_check.errors|join:", " }}
-                                </div>
-                            {% endif %}
-                        </div>
+              <div class="mb-3">
+                {{ form.password_check.label_tag }}
+                {{ form.password_check }}
+                {% if form.password_check.errors %}
+                  <div class="invalid-feedback">
+                    {{ form.password_check.errors|join:", " }}
+                  </div>
+                {% endif %}
+              </div>
 
-                        <div class="mb-3">
-                            {{ form.first_name.label_tag }}
-                            {{ form.first_name }}
-                            {% if form.first_name.errors %}
-                                <div class="invalid-feedback">
-                                    {{ form.first_name.errors|join:", " }}
-                                </div>
-                            {% endif %}
-                        </div>
+              <div class="mb-3">
+                {{ form.first_name.label_tag }}
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                  <div class="invalid-feedback">
+                    {{ form.first_name.errors|join:", " }}
+                  </div>
+                {% endif %}
+              </div>
 
-                        <div class="mb-3">
-                            {{ form.last_name.label_tag }}
-                            {{ form.last_name }}
-                            {% if form.last_name.errors %}
-                                <div class="invalid-feedback">
-                                    {{ form.last_name.errors|join:", " }}
-                                </div>
-                            {% endif %}
-                        </div>
+              <div class="mb-3">
+                {{ form.last_name.label_tag }}
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                  <div class="invalid-feedback">
+                    {{ form.last_name.errors|join:", " }}
+                  </div>
+                {% endif %}
+              </div>
 
-                        <button type="submit" class="btn btn-primary mt-3">Register</button>
-                    </form>
-                </div>
-            </div>
+              <button type="submit" class="btn btn-primary mt-3">Register</button>
+            </form>
+          </div>
         </div>
+      </div>
     </div>
-</div>
+  </div>
 {% endblock %}

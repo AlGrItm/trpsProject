@@ -14,7 +14,10 @@
         <h5>Task description</h5>
         <p>{{ task.description }}</p>
       </div>
-      <button type="button" class="btn btn-primary">Begin</button>
+      <form id="beginForm">
+        {% csrf_token %}
+        <button type="button" class="btn btn-primary" onclick="beginFill('{{ task.id }}')">Begin</button>
+      </form>
     </div>
   </div>
 </div>

@@ -6,7 +6,13 @@
     <h2 class="realization-author">Author: {{ realization.author }}</h2>
     <h3 class="realization-task-title">Task Title: {{ realization.task.title }}</h3>
     <p class="realization-task-description">Task Description: {{ realization.task.description }}</p>
-    <p class="realization-page-number">Page Number: {{ realization.current_page.number }}</p>
-    <p class="realization-page-text">Page Text: {{ realization.current_page.text }}</p>
+    {% if realization.completed %}
+      <p class="realization-page-text">Status: Completed</p>
+    {% else %}
+      <p class="realization-page-number">Page Number: {{ realization.current_page.number }}</p>
+      {% if realization.author == request.user.profile %}
+        <a href="{% url 'fill' realization.id %}" class="btn btn-primary">Continue</a>      
+      {% endif %}
+    {% endif %}
   </div>
 {% endblock %}

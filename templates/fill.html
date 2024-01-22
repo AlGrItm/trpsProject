@@ -1,0 +1,30 @@
+{% extends 'layouts/base.html' %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <h3>{{ realization.task.title }}</h3>
+          </div>
+          <div class="card-body">
+            <p>{{ realization.task.description }}</p>
+            <hr>
+            <p>{{ current_page.text }}</p>
+
+            <form method="post" action="{% url 'fill' realization.id %}">
+              {% csrf_token %}
+
+              <button type="submit" name="action" value="correct" class="btn btn-success">Correct</button>
+              {% if realization.wrong_page %}
+                <button type="submit" name="action" value="wrong" class="btn btn-danger">Wrong</button>
+              {% endif %}
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,6 +1,6 @@
 {% load static %}
 
-<div class="task-item">
+<div class="task-item {% if is_last %}last-item{% endif %}">
     <a class="task-title" href="{% url 'task' task.pk %}">{{ task.title }}</a>
     <p class="task-description">{{ task.description }}</p>
 </div>

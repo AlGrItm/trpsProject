@@ -4,9 +4,10 @@
 {% block content %}
   <div class="tasks-container">
     <h3 class="tasks-title">Tasks</h3>
-    {% for task in tasks %}
-      {% include 'components/task-item.html' %}
+    {% for task in page_obj %}
+      {% include 'components/task-item.html' with is_last=forloop.last %}
     {% endfor %}
     {% include 'components/pagination.html' %}
   </div>
+  
 {% endblock %}
