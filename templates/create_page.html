@@ -1,0 +1,47 @@
+{% extends 'layouts/base.html' %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h3>Page {{ page_number }}</h3>
+          </div>
+          <div class="card-body">
+            {% if form.errors %}
+              <div class="alert alert-danger">
+                {% for field, errors in form.errors.items %}
+                  {% for error in errors %}
+                    {{ error }}
+                  {% endfor %}
+                {% endfor %}
+              </div>
+            {% endif %}
+            <form method="post">
+              {% csrf_token %}
+
+              <div class="mb-3">
+                <label for="text" class="form-label">Text</label>
+                <textarea class="form-control" id="text" name="text" rows="4" required></textarea>
+              </div>
+
+              <div class="mb-3">
+                <label for="correct_page" class="form-label">Next page with correct decisions</label>
+                <input type="number" class="form-control" id="correct_page" name="correct_page">
+              </div>
+
+              <div class="mb-3">
+                <label for="wrong_page" class="form-label">Next page with wrong decisions</label>
+                <input type="number" class="form-control" id="wrong_page" name="wrong_page">
+              </div>
+
+              <button type="submit" class="btn btn-info">Next</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
