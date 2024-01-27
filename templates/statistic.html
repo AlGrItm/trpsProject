@@ -1,0 +1,72 @@
+{% extends 'layouts/base.html' %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+  <div class="container mt-5">
+    <h2>Статистика заданий</h2>
+
+    <form method="get" class="mb-3">
+      <div class="row">
+        <div class="col-md-6">
+          <label for="filter">Выберите фильтр:</label>
+          <select class="form-select" name="filter" id="filter">
+            <option value="all" {% if filter == 'all' %}selected{% endif %}>Показать все задания</option>
+            <option value="issued" {% if filter == 'issued' %}selected{% endif %}>Показать назначенные задания</option>
+            <option value="unissued" {% if filter == 'unissued' %}selected{% endif %}>Показать неназначенные задания
+            </option>
+            <option value="completed" {% if filter == 'completed' %}selected{% endif %}>Показать выполненные задания
+            </option>
+            <option value="uncompleted" {% if filter == 'uncompleted' %}selected{% endif %}>Показать невыполненные задания
+            </option>
+            <option value="user" {% if filter == 'user' %}selected{% endif %}>Показать задания для конкретного
+              пользователя
+            </option>
+          </select>
+        </div>
+        {% if filter == 'user' %}
+          <div class="col-md-6">
+            <label for="user_id">Выберите пользователя:</label>
+            <select class="form-select" name="user_id" id="user_id">
+              {% for user in users %}
+                <option value="{{ user.user.id }}"
+                        {% if user.id == selected_user_id %}selected{% endif %}>{{ user }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        {% endif %}
+        <div class="col-md-6 mt-3">
+          <button type="submit" class="btn btn-primary">Применить</button>
+        </div>
+      </div>
+    </form>
+
+    <table class="table">
+      <thead>
+      <tr>
+        <th scope="col">Название</th>
+        <th scope="col">Автор</th>
+        <th scope="col">Исполнитель</th>
+        <th scope="col">Описание</th>
+        <th scope="col">Страницы</th>
+        <th scope="col">Дедлайн</th>
+        <th scope="col">Назначено</th>
+        <th scope="col">Выполнено</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for task in tasks %}
+        <tr>
+          <td>{{ task.title }}</td>
+          <td>{{ task.author }}</td>
+          <td>{{ task.realizations.first.author }}</td>
+          <td>{{ task.description }}</td>
+          <td>{{ task.pages_number }}</td>
+          <td>{{ task.deadline }}</td>
+          <td>{% if task.issued %}Да{% else %}Нет{% endif %}</td>
+          <td>{% if task.realizations.first.completed %}Да{% else %}Нет{% endif %}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

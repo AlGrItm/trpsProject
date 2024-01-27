@@ -1,13 +1,15 @@
 from django.contrib import auth
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from django.views.decorators.csrf import csrf_protect
-from django.http import JsonResponse
-from django.contrib import messages
+from datetime import datetime, timedelta
 
+from django.utils import timezone
+from django.views.decorators.csrf import csrf_protect
+from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
+from django.contrib import messages
 
 from Monitoring import models, forms
 
@@ -20,11 +22,18 @@ def is_admin(user):
 
 
 def index(request):
+    print("index")
+    today = datetime.now().date()
+    deadline_soon = today + timedelta(days=7)
     if not request.user.is_authenticated:
         return redirect(reverse('login'))
-    tasks = models.Task.objects.all()
-    page_obj = paginate(tasks, request)
-    return render(request, template_name="index.html", context={'page_obj': page_obj})
+    if request.user.is_staff:
+        realizations = models.Realization.objects.get_deadlines_in_order()
+    else:
+        realizations = models.Realization.objects.uncompleted_realizations(request.user)
+    page_obj = paginate(realizations, request, 5)
+    return render(request, template_name="index.html",
+                  context={'page_obj': page_obj, 'today': today, 'deadline_soon': deadline_soon})
 
 
 def create(request):
@@ -41,22 +50,56 @@ def create(request):
     return render(request, template_name="create.html", context={'form': form})
 
 
+def edit(request, task_id):
+    task = get_object_or_404(models.Task, id=task_id)
+    if not is_admin(request.user):
+        return redirect('index')
+    if request.method == 'POST':
+        form = forms.EditTaskForm(request.POST, instance=task)
+        if form.is_valid():
+            form.save()
+            return redirect('index')
+    else:
+        form = forms.EditTaskForm(instance=task)
+    return render(request, 'edit.html', {'form': form, 'task': task})
+
+
 def create_page(request, task_id, page_number):
     if not is_admin(request.user):
         return redirect('index')
     task = get_object_or_404(models.Task, pk=task_id)
+    pages_number = task.pages_number
     if request.method == 'POST':
         form = forms.CreatePage(request.POST)
         if form.is_valid():
             page = form.save(task=task, number=page_number)
-            if page_number < task.pages.count():
+            if page_number < pages_number:
                 next_page_number = page_number + 1
                 return redirect(reverse('create_page', kwargs={'task_id': task.id, 'page_number': next_page_number}))
             else:
-                return redirect('index')
+                return JsonResponse({'redirect_url': reverse('index')})
     else:
         form = forms.CreatePage()
-    return render(request, template_name="create_page.html", context={'form': form, 'task': task, 'page_number': page_number})
+    return render(request, template_name="create_page.html",
+                  context={'form': form, 'task': task, 'page_number': page_number, 'pages_number': pages_number})
+
+
+def profiles(request, task_id):
+    if not is_admin(request.user):
+        return redirect('index')
+    task = models.Task.objects.get(pk=task_id)
+    profiles = models.Profile.objects.all()
+    if request.method == 'POST':
+        profile_id = request.POST.get('selected_profile')
+        print(request.POST)
+        if profile_id:
+            task.issued = True
+            task.save()
+            current_page = task.pages.first()
+            author = models.Profile.objects.get(pk=profile_id)
+            realization = models.Realization.objects.create(author=author, task=task, current_page=current_page)
+            return redirect(reverse('index'))
+    return render(request, template_name="profiles.html", context={'profiles': profiles, 'task': task})
 
 
 def settings(request):
@@ -87,11 +130,112 @@ def task(request, task_id):
 def profile(request, profile_id):
     if not request.user.is_authenticated:
         return redirect(reverse('login'))
+    today = datetime.now().date()
+    deadline_soon = today + timedelta(days=7)
     profile = models.Profile.objects.get(pk=profile_id)
     realizations = models.Realization.objects.filter(author=profile)
     page_obj = paginate(realizations, request, 4)
 
-    return render(request, template_name="profile.html", context={'page_obj': page_obj, 'profile': profile})
+    context = {
+        'page_obj': page_obj,
+        'profile': profile,
+        'today': today,
+        'deadline_soon': deadline_soon
+    }
+
+    return render(request, template_name="profile.html", context=context)
+
+
+def schedule(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse('login'))
+    if not is_admin(request.user):
+        return redirect(reverse('index'))
+
+    # Получаем все реализации, которые мы хотим отобразить на графике
+    filter_param = request.GET.get('filter', 'all')
+    user_id = request.GET.get('user_id', None)
+    completed = request.GET.get('completed', 'all')
+
+    realizations = models.Realization.objects.all()
+
+    # Определяем labels и datasets для графика
+    labels = []  # Здесь поместите ваши даты
+    datasets = []
+
+    for realization in realizations:
+        # Определяем дату завершения (дедлайн или сегодняшняя дата, если не выполнено)
+        completion_date = realization.task.deadline if realization.completed else timezone.now().date()
+
+        # Получаем цвет для даты завершения и дедлайна
+        realization.completion_date_color = get_date_color(completion_date)
+        realization.deadline_color = get_date_color(realization.task.deadline)
+
+        # Добавляем данные для графика
+        data = [
+            {'t': completion_date, 'y': 1 if realization.completion_date_color == 'green-cell' else -1}
+        ]
+        datasets.append({
+            'label': str(realization),
+            'borderColor': 'rgba(75, 192, 192, 1)',
+            'data': data,
+        })
+
+    if filter_param == 'user':
+        # Если указан user_id, фильтруем по нему
+        if user_id:
+            realizations = realizations.filter(author__user_id=user_id)
+
+    if completed != 'all':
+        # Добавляем фильтр по статусу выполнения
+        realizations = realizations.filter(completed=(completed == 'true'))
+
+    # Создаем контекст для передачи в шаблон
+    context = {
+        'realizations': realizations,
+        'today': timezone.now().date(),
+        'labels': labels,
+        'datasets': datasets,
+    }
+
+    return render(request, template_name="schedule.html", context=context)
+
+
+def statistic(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse('login'))
+    if not is_admin(request.user):
+        return redirect(reverse('index'))
+
+    filter = request.GET.get('filter', 'all')
+    user_id = request.GET.get('user_id')
+
+    tasks = []
+
+    if filter == 'all':
+        tasks = models.Task.objects.all()
+    elif filter == 'issued':
+        tasks = models.Task.objects.filter(issued=True)
+    elif filter == 'unissued':
+        tasks = models.Task.objects.filter(issued=False)
+    elif filter == 'completed':
+        tasks = models.Task.objects.completed_tasks()
+    elif filter == 'uncompleted':
+        tasks = models.Task.objects.uncompleted_tasks()
+    elif filter == 'user' and user_id:
+        selected_user = models.Profile.objects.get(pk=user_id)
+        tasks = models.Task.objects.user_tasks(selected_user)
+
+    users = models.Profile.objects.all()
+    selected_user_id = int(user_id) if user_id else None
+
+    context = {
+        'tasks': tasks,
+        'filter': filter,
+        'users': users,
+        'selected_user_id': user_id,
+    }
+    return render(request, template_name="statistic.html", context=context)
 
 
 def realization(request, realization_id):
@@ -167,10 +311,25 @@ def logout(request):
     return redirect(reverse('login'))
 
 
+def get_date_color(completion_date):
+    # Определяем цвет в зависимости от даты
+    if completion_date < timezone.now().date():
+        return 'red-cell'
+    else:
+        return 'green-cell'
+
+
 def paginate(objects, request, per_page=15):
+    if objects is None:
+        return None
     paginator = Paginator(objects, per_page)
     page = request.GET.get('page', 1)
-    page_obj = paginator.page(page)
+    try:
+        page_obj = paginator.page(page)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
     return page_obj
 
 

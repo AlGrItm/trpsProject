@@ -1,0 +1,12 @@
+<div class="employee-list">
+  <h3>Сотрудники</h3>
+  {% for profile in profiles %}
+    <a href="{% url 'profile' profile.user.id %}" class="employee-link">{{ profile }}</a>
+  {% endfor %}
+</div>
+<div class="new-tasks">
+  <h3>Нераспределённые задания</h3>
+  {% for task in unissued_tasks %}
+    <a href="{% url 'task' task.pk %}" class="employee-link">{{ task }}</a>
+  {% endfor %}
+</div>

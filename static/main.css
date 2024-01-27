@@ -225,3 +225,29 @@ list-style-type: none;
 .realization-item.last-item {
     margin-bottom: 6vh;
 }
+
+.realization-deadline {
+    font-size: 18px;
+    color: #333;
+}
+
+.confirmation-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.confirmation-content {
+    background-color: #fff;
+    padding: 20px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}

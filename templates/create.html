@@ -7,14 +7,14 @@
       <div class="col-md-6">
         <div class="card">
           <div class="card-header">
-            <h3>New Task</h3>
+            <h3>Новое задание</h3>
           </div>
           <div class="card-body">
             {% if form.errors %}
               <div class="alert alert-danger">
                 {% for field, errors in form.errors.items %}
                   {% for error in errors %}
-                    {{ error }}
+                    {{ error }}<br>
                   {% endfor %}
                 {% endfor %}
               </div>
@@ -23,21 +23,27 @@
               {% csrf_token %}
 
               <div class="mb-3">
-                <label for="title" class="form-label">Title</label>
+                <label for="title" class="form-label">Название</label>
                 <input type="text" class="form-control" id="title" name="title" required>
               </div>
 
               <div class="mb-3">
-                <label for="description" class="form-label">Description</label>
+                <label for="description" class="form-label">Описание</label>
                 <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
               </div>
 
               <div class="mb-3">
-                <label for="pages_number" class="form-label">Number of Pages</label>
+                <label for="pages_number" class="form-label">Количество страниц</label>
                 <input type="number" class="form-control" id="pages_number" name="pages_number" required>
               </div>
 
-              <button type="submit" class="btn btn-info">Create</button>
+
+              <div class="mb-3">
+                <label for="deadline" class="form-label">Дедлайн</label>
+                <input type="date" class="form-control" id="deadline" name="deadline" required>
+              </div>
+
+              <button type="submit" class="btn btn-info">Создать</button>
             </form>
           </div>
         </div>

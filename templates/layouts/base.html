@@ -1,47 +1,52 @@
-{%  load static %}
+{% load static %}
 
 <!doctype html>
 <html lang="en" class="h-100" data-bs-theme="auto">
-  <head>
-    <link rel="icon" href="data:;base64,=">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+<head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 
-    <link href="{% static '/main.css' %}" rel="stylesheet">
-    <link href="{% static '/bootstrap.css' %}" rel="stylesheet">
-     {% include 'bootstrap/symbols.html' %}
-  </head>
-  
-  <body class="d-flex flex-column h-100">
-    {% include 'components/header.html' %}
+  <link href="{% static '/main.css' %}" rel="stylesheet">
+  <link href="{% static '/bootstrap.css' %}" rel="stylesheet">
+  {% include 'bootstrap/symbols.html' %}
+</head>
 
-    <main>
-      <div class="split left">
-          {% block content %}
-          {% endblock %}
-      </div>
-    
-      <div class="split right">
-      <div class="employee-list">
-          <h3>Employees</h3>
-          {% for profile in profiles %}
-            <a href="{% url 'profile' profile.user.id %}" class="employee-link">{{ profile }}</a>
-          {% endfor %}
-        </div>
-        <div class="new-tasks">
-          <h3>New tasks</h3>
-          {% for task in recent_tasks %}
-            <a href="{% url 'task' task.pk %}" class="employee-link">{{ task }}</a>
-          {% endfor %}
-        </div>
-      </div>
-    </main>
-    
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="{% static 'script.js' %}"></script>
-  </body>
+<body class="d-flex flex-column h-100">
+{% include 'components/header.html' %}
+
+<main>
+  {% if user.is_staff %}
+    <div class="split left">
+  {% endif %}
+  {% block content %}
+  {% endblock %}
+  {% if user.is_staff %}
+    </div>
+    <div class="split right">
+      {% include 'admin.html' %}
+    </div>
+  {% endif %}
+</main>
+
+{% include 'modal.html' %}
+
+<!--Подключение ajax-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+
+<!--Подключение js bootstrap-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+
+<!--Подключение графической библиотеки-->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="{% static 'script.js' %}"></script>
+<script src="{% static 'return_data.js' %}"></script>
+
+</body>
 </html>

@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth import authenticate, update_session_auth_hash
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 from Monitoring import models
 
@@ -42,10 +43,11 @@ class RegisterForm(forms.Form):
 
 class CreateTask(forms.ModelForm):
     pages_number = forms.IntegerField()
+    deadline = forms.DateField(widget=forms.SelectDateWidget)
 
     class Meta:
         model = models.Task
-        fields = ['title', 'description', 'pages_number']
+        fields = ['title', 'description', 'pages_number', 'deadline']
 
     def __init__(self, *args, author=None, **kwargs):
         super().__init__(*args, **kwargs)
@@ -54,8 +56,20 @@ class CreateTask(forms.ModelForm):
     def clean_pages_number(self):
         pages_number = self.cleaned_data['pages_number']
         if pages_number <= 0:
-            self.add_error('pages_number', "The page number is a positive number.")
+            self.add_error('pages_number', "Количество страниц должно быть положительным числом")
         return pages_number
+
+    def clean(self):
+        cleaned_data = super().clean()
+        title = cleaned_data.get('title')
+        deadline = cleaned_data.get('deadline')
+
+        if models.Task.objects.filter(title=title).exclude(id=self.instance.id).exists():
+            self.add_error('title', "Задание с таким названием уже существует")
+
+        if deadline and deadline < timezone.now().date():
+            self.add_error('deadline', "Дедлайн не может быть в прошедшем времени")
+        return cleaned_data
 
     def save(self, commit=True):
         task = super().save(commit=False)
@@ -65,6 +79,39 @@ class CreateTask(forms.ModelForm):
             for page_number in range(1, self.cleaned_data['pages_number'] + 1):
                 task.pages.create(number=page_number)
         return task
+
+
+class EditTaskForm(forms.ModelForm):
+    class Meta:
+        model = models.Task
+        fields = ['title', 'description', 'deadline']
+        labels = {
+            'title': 'Название',
+            'description': 'Описание',
+            'deadline': 'Дедлайн',
+        }
+        widgets = {
+            'deadline': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(EditTaskForm, self).__init__(*args, **kwargs)
+        # Добавляем Bootstrap-классы для стилизации
+        for field_name, field in self.fields.items():
+            field.widget.attrs.update({'class': 'form-control'})
+
+    def clean_deadline(self):
+        deadline = self.cleaned_data['deadline']
+        if deadline and deadline <= timezone.now().date():
+            raise ValidationError('Дедлайн не может быть в прошлом')
+        return deadline
+
+    def clean_title(self):
+        title = self.cleaned_data['title']
+        existing_titles = models.Task.objects.exclude(id=self.instance.id).values_list('title', flat=True)
+        if title in existing_titles:
+            raise ValidationError('Задание с таким названием уже существует')
+        return title
 
 
 class CreatePage(forms.ModelForm):

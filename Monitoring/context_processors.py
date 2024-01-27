@@ -6,8 +6,8 @@ def profiles(request):
 
 
 def tasks(request):
-    recent_tasks = Task.objects.get_recent_tasks()
-    return {'recent_tasks': recent_tasks}
+    unissued_tasks = Task.objects.get_unissued_tasks()
+    return {'unissued_tasks': unissued_tasks}
 
 
 def authenticated(request):

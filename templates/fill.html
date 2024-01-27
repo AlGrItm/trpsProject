@@ -18,7 +18,7 @@
               {% csrf_token %}
 
               <button type="submit" name="action" value="correct" class="btn btn-success">Correct</button>
-              {% if realization.wrong_page %}
+              {% if realization.current_page.wrong_page %}
                 <button type="submit" name="action" value="wrong" class="btn btn-danger">Wrong</button>
               {% endif %}
             </form>
