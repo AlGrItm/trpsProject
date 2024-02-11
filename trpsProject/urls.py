@@ -21,4 +21,5 @@ urlpatterns = [
     path('edit/<task_id>', views.edit, name='edit'),
     path('statistic', views.statistic, name='statistic'),
     path('schedule', views.schedule, name='schedule'),
+    path('top', views.top, name='top'),
 ]

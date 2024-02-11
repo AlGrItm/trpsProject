@@ -3,21 +3,36 @@
 <div class="realization-item {% if is_last %}last-item{% endif %}">
   <img class="avatar-image" src="{{ realization.author.avatar.url }}" alt="Avatar" width="40" height="40">
   <div class="details-container">
-    <p class="realization-deadline"
-       style="color: {% if realization.task.deadline < today %}red{% elif realization.task.deadline < deadline_soon %}orange{% else %}green{% endif %};">
-      Дедлайн:
-      {% if realization.task.deadline %}
-        {{ realization.task.deadline|date:"d.m.Y" }}
-      {% endif %}
-    </p>
-    <a class="realization-author" href="{% url 'profile' profile_id=realization.author.pk %}">{{ realization.author }}</a><br>
-    <a class="realization-title" href="{% url 'realization' realization.pk %}">{{ realization.task.title }}</a>
-    <p class="realization-description">{{ realization.task.description }}</p>
+
+    {% if not realization.completed %}
+      <p class="realization-deadline"
+         style="color: {% if realization.task.deadline < today %}red{% elif realization.task.deadline < deadline_soon %}orange{% else %}green{% endif %};">
+        Дедлайн:
+        {% if realization.task.deadline %}
+          {{ realization.task.deadline|date:"d.m.Y" }}
+        {% endif %}
+      </p>
+    {% else %}
+      <p class="realization-deadline" style="color: grey;">
+        Дата выполнения:
+        {{ realization.completed_date|date:"d.m.Y" }}
+      </p>
+    {% endif %}
+
+    <a class="realization-author"
+       href="{% url 'profile' profile_id=realization.author.pk %}">{{ realization.author }}</a><br>
+    <a class="realization-title" href="{% url 'task' realization.task.pk %}">{{ realization.task.title }}</a>
     <p class="realization-status {% if not realization.completed %}incompleted{% endif %}">
       Статус: {% if realization.completed %}выполнено{% else %}не выполнено{% endif %}
     </p>
     {% if not realization.completed %}
       <p class="current-page-info">Текущая страница задания: {{ realization.current_page.number }}</p>
+    {% endif %}
+
+    {% if realization.author == request.user.profile %}
+      {% if not realization.completed %}
+        <a href="{% url 'realization' realization.pk %}" class="edit-button">Перейти на страницу решения</a>
+      {% endif %}
     {% endif %}
   </div>
 </div>

@@ -2,119 +2,143 @@
 {% load static %}
 
 {% block content %}
-  <style>
-      .green-cell {
-          background-color: lightgreen;
-      }
-
-      .red-cell {
-          background-color: lightcoral;
-      }
-  </style>
-  <div class="container mt-5">
-    <h2>График реализаций</h2>
-
-    <form method="get" class="mb-3">
-      <div class="row">
-        <div class="col-md-4">
-          <label for="filter">Фильтр по пользователям:</label>
-          <select class="form-select" name="filter" id="filter">
-            <option value="all" {% if filter == 'all' %}selected{% endif %}>Все пользователи</option>
-            <option value="user" {% if filter == 'user' %}selected{% endif %}>Конкретный пользователь</option>
+  <div class="container mt-5"">
+    <form method="get" action="{% url 'schedule' %}" class="mb-3">
+      <label for="filter">Фильтр заданий:</label>
+      <select name="filter" id="filter">
+        <option value="all" {% if filter == 'all' %}selected{% endif %}>Все задания</option>
+        <option value="assigned" {% if filter == 'assigned' %}selected{% endif %}>Назначенные задания</option>
+        <option value="completed" {% if filter == 'completed' %}selected{% endif %}>Выполненные задания</option>
+        <option value="uncompleted" {% if filter == 'uncompleted' %}selected{% endif %}>Невыполненные задания</option>
+        <option value="overdue" {% if filter == 'overdue' %}selected{% endif %}>Задания с просроченным дедлайном
+        </option>
+        <option value="user" {% if filter == 'user' %}selected{% endif %}>Показать задания для конкретного
+          пользователя
+        </option>
+        <!-- Добавьте остальные опции фильтрации -->
+      </select><br><br>
+      {% if filter == 'user' %}
+        <div class="col-md-6">
+          <label for="user_id">Выберите пользователя:</label>
+          <select name="user_id" id="user_id">
+            {% for user in users %}
+              <option value="{{ user.user.id }}" {% if selected_user_id == user.user.id %}selected{% endif %}>{{ user }}</option>
+            {% endfor %}
           </select>
-        </div>
-        {% if filter == 'user' %}
-          <div class="col-md-4">
-            <label for="user_id">Выберите пользователя:</label>
-            <select class="form-select" name="user_id" id="user_id">
-              {% for user in users %}
-                <option value="{{ user.id }}"
-                        {% if user.id == selected_user_id %}selected{% endif %}>{{ user }}</option>
-              {% endfor %}
-            </select>
-          </div>
-        {% endif %}
-        <div class="col-md-4">
-          <label for="completed">Статус выполнения:</label>
-          <select class="form-select" name="completed" id="completed">
-            <option value="all" {% if completed == 'all' %}selected{% endif %}>Все</option>
-            <option value="true" {% if completed == 'true' %}selected{% endif %}>Выполненные</option>
-            <option value="false" {% if completed == 'false' %}selected{% endif %}>Не выполненные</option>
-          </select>
-        </div>
-        <div class="col-md-4 mt-3">
-          <button type="submit" class="btn btn-primary">Применить</button>
-        </div>
+        </div><br>
+      {% endif %}
+      <label for="date">Фильтр времени:</label>
+      <select name="date" id="date">
+        <option value="align" {% if date == 'align' %}selected{% endif %}>Выровнять по заданиям</option>
+        <option value="this_week" {% if date == 'this_week' %}selected{% endif %}>Текущая неделя</option>
+        <option value="next_week" {% if date == 'next_week' %}selected{% endif %}>Следующая неделя</option>
+        <option value="this_month" {% if date == 'this_month' %}selected{% endif %}>Текущий месяц</option>
+        <option value="next_month" {% if date == 'next_month' %}selected{% endif %}>Следующий месяц</option>
+        <option value="half_year" {% if date == 'half_year' %}selected{% endif %}>Полгода</option>
+        <option value="custom" {% if date == 'custom' %}selected{% endif %}>Выбрать самому</option>
+        <!-- Добавьте остальные опции фильтрации -->
+      </select>
+
+      <div id="customDate" style="display: block"><br>
+        <!-- Блоки для выбора первого и последнего дня -->
+        <label for="startDate">Начальная дата:</label>
+        <input type="date" name="startDate" id="startDate">
+
+        <label for="endDate">Конечная дата:</label>
+        <input type="date" name="endDate" id="endDate">
       </div>
+
+      <button type="submit" class="btn btn-primary">Применить</button>
     </form>
+    <h2>График выполнения заданий</h2>
 
-    <div class="chart-container" style="position: relative; height:40vh; width:80vw">
-      <canvas id="myChart"></canvas>
-    </div>
-  </div>
+    <div class="table-responsive">
+      <div class="fixed-col">
+        <table class="table table-bordered">
+          <thead>
+          <tr>
+            <th scope="col">Задания</th>
+            {% for day in days %}
+              <th scope="col">{{ day|date:"d.m.Y" }}</th>
+            {% endfor %}
+          </tr>
+          </thead>
+          <tbody>
+          {% for task in tasks %}
+            <tr>
+              <td style="min-width: 150px;">
+                {{ task }}
+              </td>
+              <!-- Закрашиваем ячейки, которые находятся между днем создания и днем дедлайна -->
+              {% for day in days %}
+                {% if task.realizations.first.completed %}
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      var ctx = document.getElementById('myChart').getContext('2d');
+                  {% if day < task.deadline and day >= task.created_at.date %}
 
-      var labels = [];  // Здесь поместите ваши даты
-      var datasets = [];
+                    <td style="background-color: lightgrey;" data-bs-toggle="tooltip" data-bs-placement="top"
+                        title="{{ task }} {% if task.realizations.first.author %}{{ task.realizations.first.author }}{% else %}Не назначено{% endif %}">
+                    </td>
 
-      {% for realization in realizations %}
-        var data = [
-          {% for date, color_class in realization.date_colors.items %}
-            {% if color_class == 'green-cell' %}
-              { t: '{{ date }}', y: 1 },
-            {% elif color_class == 'red-cell' %}
-              { t: '{{ date }}', y: -1 },
-            {% endif %}
+                  {% else %}
+
+                    <td data-bs-toggle="tooltip" title="{{ task }}"></td>
+
+                  {% endif %}
+
+                {% elif task.realizations.first.completed == False %}
+
+                  {% if day < task.deadline and day >= task.created_at.date %}
+
+                    <td style="background-color: lightgreen;" data-bs-toggle="tooltip" data-bs-placement="top"
+                        title="{{ task }} {% if task.realizations.first.author %}{{ task.realizations.first.author }}{% else %}Не назначено{% endif %}">
+                    </td>
+
+                  {% elif day == task.deadline %}
+
+                    <td style="background-color: orange;" data-bs-toggle="tooltip" data-bs-placement="top"
+                        title="{{ task }} {% if task.realizations.first.author %}{{ task.realizations.first.author }}{% else %}Не назначено{% endif %}">
+                    </td>
+
+                  {% elif day > task.deadline and day <= today %}
+                    <td style="background-color: red;" data-bs-toggle="tooltip" data-bs-placement="top"
+                        title="{{ task }} {% if task.realizations.first.author %}{{ task.realizations.first.author }}{% else %}Не назначено{% endif %}">
+                    </td>
+
+                  {% else %}
+
+                    <td data-bs-toggle="tooltip" title="{{ task }}"></td>
+
+                  {% endif %}
+
+                {% else %}
+
+                  <td data-bs-toggle="tooltip" title="{{ task }}"></td>
+
+                {% endif %}
+              {% endfor %}
+            </tr>
           {% endfor %}
-        ];
-
-        datasets.push({
-          label: '{{ realization }}',
-          borderColor: 'rgba(75, 192, 192, 1)',
-          data: data,
-        });
-      {% endfor %}
-
-      var myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: labels,
-          datasets: datasets,
-        },
-        options: {
-          scales: {
-            x: {
-              type: 'time',
-              time: {
-                unit: 'month',  // Укажите необходимую единицу времени
-                tooltipFormat: 'll',  // Формат для всплывающих подсказок
-              },
-              title: {
-                display: true,
-                text: 'Дата',
-              },
-            },
-            y: {
-              title: {
-                display: true,
-                text: 'Статус',
-              },
-              ticks: {
-                min: -1,
-                max: 1,
-                stepSize: 1,
-                callback: function(value, index, values) {
-                  return value === 1 ? 'Зеленый' : (value === -1 ? 'Красный' : '');
-                },
-              },
-            },
-          },
-        },
-      });
-    });
-  </script>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <div class="container mt-5 help-container">
+    <span class="badge badge-secondary color-badge">Серый - задание выполнено</span>
+    <span class="badge badge-warning color-badge">Оранжевый - дедлайн</span>
+    <span class="badge badge-danger color-badge">Красный - срок выполнения просрочен</span>
+    <span class="badge badge-success color-badge">Зеленый - срок выполнения задания</span>
+  </div>
 {% endblock %}
+
+<script>
+  function toggleCustomDate() {
+    let customDateDiv = document.getElementById("customDate");
+    let dateSelect = document.getElementById("date");
+
+    if (dateSelect.value === "custom") {
+      customDateDiv.style.display = "block";
+    } else {
+      customDateDiv.style.display = "none";
+    }
+  }
+</script>

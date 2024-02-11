@@ -17,7 +17,7 @@
                 {% endfor %}
               </div>
             {% endif %}
-            <h3>Registration</h3>
+            <h3 class="text-center">Регистрация</h3>
           </div>
           <div class="card-body">
             <form method="post" class="needs-validation" novalidate>
@@ -25,55 +25,35 @@
 
               <div class="mb-3">
                 {{ form.username.label_tag }}
-                {{ form.username }}
-                {% if form.username.errors %}
-                  <div class="invalid-feedback">
-                    {{ form.username.errors|join:", " }}
-                  </div>
-                {% endif %}
+                <input type="text" name="{{ form.username.name }}" class="form-control"
+                       value="{{ form.username.value }}" required>
               </div>
 
               <div class="mb-3">
                 {{ form.password.label_tag }}
-                {{ form.password }}
-                {% if form.password.errors %}
-                  <div class="invalid-feedback">
-                    {{ form.password.errors|join:", " }}
-                  </div>
-                {% endif %}
+                <input type="password" name="{{ form.password.name }}" class="form-control" required>
               </div>
 
               <div class="mb-3">
                 {{ form.password_check.label_tag }}
-                {{ form.password_check }}
-                {% if form.password_check.errors %}
-                  <div class="invalid-feedback">
-                    {{ form.password_check.errors|join:", " }}
-                  </div>
-                {% endif %}
+                <input type="password" name="{{ form.password_check.name }}" class="form-control" required>
               </div>
 
               <div class="mb-3">
                 {{ form.first_name.label_tag }}
-                {{ form.first_name }}
-                {% if form.first_name.errors %}
-                  <div class="invalid-feedback">
-                    {{ form.first_name.errors|join:", " }}
-                  </div>
-                {% endif %}
+                <input type="text" name="{{ form.first_name.name }}" class="form-control"
+                       value="{{ form.first_name.value }}" required>
               </div>
 
               <div class="mb-3">
                 {{ form.last_name.label_tag }}
-                {{ form.last_name }}
-                {% if form.last_name.errors %}
-                  <div class="invalid-feedback">
-                    {{ form.last_name.errors|join:", " }}
-                  </div>
-                {% endif %}
+                <input type="text" name="{{ form.last_name.name }}" class="form-control"
+                       value="{{ form.last_name.value }}" required>
               </div>
 
-              <button type="submit" class="btn btn-primary mt-3">Register</button>
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+              </div>
             </form>
           </div>
         </div>

@@ -1,84 +1,84 @@
 main > .container {
-padding: 60px 15px 0;
+    padding: 60px 15px 0;
 }
 
 li {
-margin-left: 20px;
-list-style-type: none;
+    margin-left: 20px;
+    list-style-type: none;
 }
 
-  /* Split the screen in half */
+/* Split the screen in half */
 .split {
-  margin-top: 45px;
-  height: 100%;
-  position: fixed;
-  z-index: 1;
-  top: 0;
-  overflow-x: hidden;
-  padding-top: 20px;
+    margin-top: 45px;
+    height: 100%;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    overflow-x: hidden;
+    padding-top: 20px;
 }
 
 /* Control the left side */
 .left {
-  width: 70%;
-  left: 0;
-  background-color: #ffffff;
+    width: 70%;
+    left: 0;
+    background-color: #ffffff;
 }
 
 /* Control the right side */
 .right {
-  width: 30%;
-  right: 0;
-  background-color: #f2f3f4;
-  margin-left: 20px;
+    width: 30%;
+    right: 0;
+    background-color: #f2f3f4;
+    margin-left: 20px;
 }
 
 #right-block {
-  margin-left: 20px;
+    margin-left: 20px;
 }
 
 .wrapper {
-  display: flex;
-  text-align: center;
-  margin: auto;
+    display: flex;
+    text-align: center;
+    margin: auto;
 }
 
 .dark-icon {
-  border: medium none;
-  background-image: none;
-  background: transparent;
-  float: left;
-  background-color: transparent;
-  height: 40px;
+    border: medium none;
+    background-image: none;
+    background: transparent;
+    float: left;
+    background-color: transparent;
+    height: 40px;
 }
 
 .realization-container {
-  margin: 30px;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
+    margin: 30px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
 }
 
 .realization-author {
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
 }
 
 .realization-task-title {
-  font-size: 20px;
-  color: #007bff;
+    font-size: 20px;
+    color: #007bff;
 }
 
 .realization-task-description {
-  font-size: 16px;
-  color: #555;
+    font-size: 16px;
+    color: #555;
 }
 
 .realization-page-number,
 .realization-page-text {
-  font-size: 18px;
-  color: #333;
+    font-size: 18px;
+    color: #333;
 }
 
 .task-item {
@@ -101,16 +101,16 @@ list-style-type: none;
 }
 
 .tasks-container {
-  max-width: 800px;
-  margin: 0 auto;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .tasks-title {
-  color: #007bff;
-  font-size: 24px;
-  margin-bottom: 20px;
-  border-bottom: 2px solid #007bff;
-  padding-bottom: 5px;
+    color: #007bff;
+    font-size: 24px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 5px;
 }
 
 .realization-item {
@@ -160,27 +160,27 @@ list-style-type: none;
 }
 
 .profile-heading {
-  color: #3498db;
-  font-size: 24px;
-  margin-bottom: 10px;
-  margin-left: 20px;
+    color: #3498db;
+    font-size: 24px;
+    margin-bottom: 10px;
+    margin-left: 20px;
 }
 
 .employee-list {
-  margin-bottom: 20px;
-  margin-left: 20px;
+    margin-bottom: 20px;
+    margin-left: 20px;
 }
 
 .employee-link {
-  display: block;
-  color: #333;
-  margin-bottom: 8px;
-  text-decoration: none;
-  font-weight: bold;
+    display: block;
+    color: #333;
+    margin-bottom: 8px;
+    text-decoration: none;
+    font-weight: bold;
 }
 
 .new-tasks {
-  padding: 15px;
+    padding: 15px;
 }
 
 .incompleted {
@@ -189,37 +189,37 @@ list-style-type: none;
 }
 
 .pagination-container {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
 }
 
 .step-links a {
-  padding: 8px 12px;
-  margin: 0 5px;
-  text-decoration: none;
-  border: 1px solid #ddd;
-  color: #333;
-  border-radius: 4px;
+    padding: 8px 12px;
+    margin: 0 5px;
+    text-decoration: none;
+    border: 1px solid #ddd;
+    color: #333;
+    border-radius: 4px;
 }
 
 .step-links .current {
-  padding: 8px 12px;
-  margin: 0 5px;
-  text-decoration: none;
-  border: 1px solid #007bff;
-  color: #007bff;
-  border-radius: 4px;
-  background-color: #007bff;
-  color: #fff;
+    padding: 8px 12px;
+    margin: 0 5px;
+    text-decoration: none;
+    border: 1px solid #007bff;
+    color: #007bff;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: #fff;
 }
 
 .pagination-container {
-  margin-bottom: 10vh;
+    margin-bottom: 10vh;
 }
 
 .tasks-container .last-item {
-  margin-bottom: 5vh;
+    margin-bottom: 5vh;
 }
 
 .realization-item.last-item {
@@ -250,4 +250,55 @@ list-style-type: none;
     transform: translate(-50%, -50%);
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.help-container {
+    margin-bottom: 10vh;
+}
+
+.color-badge {
+    margin-right: 10px;
+    color: black;
+}
+
+.task-status {
+  width: 300px;
+  height: 70px;
+  background-color: #ccc;
+  border-radius: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-family: 'YourUnusualFont', sans-serif;
+  font-size: 16px;
+}
+
+.task-status p {
+  margin: 0;
+  color: #333;
+}
+
+.no-tasks-message {
+    color: #555;
+    font-style: italic;
+    margin-top: 10px;
+}
+
+.larger-avatar {
+    width: 300px;
+    height: 300px;
+}
+
+.smaller-avatar {
+    width: 220px;
+    height: 220px;
+}
+
+.card {
+    border: none;
+}
+
+.card-body {
+    padding: 0;
 }

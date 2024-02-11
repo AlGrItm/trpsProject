@@ -12,14 +12,14 @@
           <div class="card-body">
             <p>{{ realization.task.description }}</p>
             <hr>
-            <p>{{ current_page.text }}</p>
+            <p>{{ realization.current_page.text }}</p>
 
             <form method="post" action="{% url 'fill' realization.id %}">
               {% csrf_token %}
 
-              <button type="submit" name="action" value="correct" class="btn btn-success">Correct</button>
+              <button type="submit" name="action" value="correct" class="btn btn-success">Правильно</button>
               {% if realization.current_page.wrong_page %}
-                <button type="submit" name="action" value="wrong" class="btn btn-danger">Wrong</button>
+                <button type="submit" name="action" value="wrong" class="btn btn-danger">Неправильно</button>
               {% endif %}
             </form>
           </div>

@@ -3,11 +3,22 @@
 
 {% block content %}
   <div class="tasks-container">
+    {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
     <h3 class="tasks-title">Ближайшие задания</h3>
-    {% for realization in page_obj %}
-      {% include 'components/realization-item.html' with is_last=forloop.last %}
-    {% endfor %}
+    {% if page_obj.object_list %}
+      {% for realization in page_obj %}
+        {% include 'components/realization-item.html' with is_last=forloop.last %}
+      {% endfor %}
+    {% else %}
+      <h5 class="no-tasks-message">Нет назначенных заданий</h5>
+    {% endif %}
     {% include 'components/pagination.html' %}
   </div>
-  
+
 {% endblock %}

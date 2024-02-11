@@ -4,24 +4,57 @@
 {% block content %}
   <div class="split left">
     <div class="container mt-4">
-      <div class="offset-md-1 col-md-5">
+      <div class="offset-md-1 col-md-5 text-center">
         <div class="mb-3">
-          <h5>Название задания</h5>
-          <p>{{ task.title }}</p>
+          <h1 class="display-4">{{ task.title }}</h1>
         </div>
 
         <div class="mb-3">
-          <h5>Описание задания</h5>
-          <p>{{ task.description }}</p>
+          <h2 class="mb-4">{{ task.description }}</h2>
         </div>
-        <form id="beginForm">
-          {% csrf_token %}
-          <button type="button" class="btn btn-primary" onclick="beginFill('{{ task.id }}')">Начать</button>
-        </form>
+        <div class="task-status mx-auto" style="
+          {% if realization.completed %}
+            #00FF00;
+          {% elif realization %}
+            background: linear-gradient(to right, #CCCCCC 0%, #5f7d5f {{ percent }}%, #5f7d5f {{ percent }}%, #CCCCCC {{ percent }}%, #CCCCCC 100%);
+          {% else %}
+            #CCCCCC;
+          {% endif %}
+          ">
+          {% if realization.completed %}
+            <p>Задание выполнено</p>
+          {% elif realization %}
+            <p>Выполнено на {{ percent }} %</p>
+          {% else %}
+            <p>Задание не назначено</p>
+          {% endif %}
+        </div>
+        <br>
+        {% if realization.completed %}
+          <p class="realization-deadline" style="color: grey;">
+            Дата выполнения:
+            {{ realization.completed_date|date:"d.m.Y" }}
+          </p>
+        {% elif task.issued %}
+          <p class="realization-deadline"
+             style="color: {% if realization.task.deadline < today %}red{% elif realization.task.deadline < deadline_soon %}orange{% else %}green{% endif %};">
+            Дедлайн:
+            {% if realization.task.deadline %}
+              {{ realization.task.deadline|date:"d.m.Y" }}
+            {% endif %}
+          </p>
+        {% endif %}
 
-        <!-- Добавленная кнопка для перехода на /profiles/<task_id> -->
-        <a href="{% url 'profiles' task.id %}" class="btn btn-secondary mt-3">Назначить задание</a><br>
-        <a href="{% url 'edit' task.id %}" class="btn btn-dark mt-3">Редактировать задание</a>
+        {% if request.user.is_staff %}
+          {% if not task.realizations.first %}
+            <form id="beginForm">
+              {% csrf_token %}
+              <button type="button" class="btn btn-primary" onclick="beginFill('{{ task.id }}')">Начать</button>
+            </form>
+            <a href="{% url 'profiles' task.id %}" class="btn btn-secondary mt-3">Назначить задание</a><br>
+          {% endif %}
+          <a href="{% url 'edit' task.id %}" class="btn btn-dark mt-3">Редактировать задание</a>
+        {% endif %}
       </div>
     </div>
   </div>

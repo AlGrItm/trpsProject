@@ -1,8 +1,10 @@
 {% extends 'layouts/base.html' %}
 {% load django_bootstrap5 %}
+{% load static %}
+
 
 {% block content %}
-  <div class="container mt-5">
+  <div class="container mt-5" style="margin-bottom: 6vh;">
     <h2>Статистика заданий</h2>
 
     <form method="get" class="mb-3">
@@ -51,19 +53,21 @@
         <th scope="col">Дедлайн</th>
         <th scope="col">Назначено</th>
         <th scope="col">Выполнено</th>
+        <th scope="col">Дата выполнения</th>
       </tr>
       </thead>
       <tbody>
       {% for task in tasks %}
         <tr>
-          <td>{{ task.title }}</td>
+          <td><a href="{% url 'task' task_id=task.id %}">{{ task.title }}</a></td>
           <td>{{ task.author }}</td>
           <td>{{ task.realizations.first.author }}</td>
           <td>{{ task.description }}</td>
           <td>{{ task.pages_number }}</td>
-          <td>{{ task.deadline }}</td>
+          <td>{{ task.deadline|date:"d.m.Y" }}</td>
           <td>{% if task.issued %}Да{% else %}Нет{% endif %}</td>
           <td>{% if task.realizations.first.completed %}Да{% else %}Нет{% endif %}</td>
+          <td>{% if task.realizations.first.completed %}{{ task.realizations.first.completed_date|date:"d.m.Y" }}{% else %}-{% endif %}</td>
         </tr>
       {% endfor %}
       </tbody>

@@ -7,13 +7,34 @@
       <div class="col-md-6">
         <div class="card">
           <div class="card-header">
-            <h3>Log in</h3>
+            <h3 class="text-center">Вход в аккаунт</h3>
           </div>
           <div class="card-body">
+            {% if form.errors %}
+              <div class="alert alert-danger">
+                {% for field, errors in form.errors.items %}
+                  {% for error in errors %}
+                    {{ error }}<br>
+                  {% endfor %}
+                {% endfor %}
+              </div>
+            {% endif %}
             <form method="post">
               {% csrf_token %}
-              {{ form.as_p }}
-              <button type="submit" class="btn btn-primary">Login</button>
+
+              <div class="mb-3">
+                {{ form.username.label_tag }}
+                <input type="text" name="{{ form.username.name }}" class="form-control" value="{{ form.username.value }}">
+              </div>
+
+              <div class="mb-3">
+                {{ form.password.label_tag }}
+                <input type="password" name="{{ form.password.name }}" class="form-control" value="{{ form.password.value }}">
+              </div>
+
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Войти</button>
+              </div>
             </form>
           </div>
         </div>

@@ -1,0 +1,46 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="container mt-5">
+    <h2 class="text-center mb-4">Лучшие сотрудники {{ month }}</h2>
+    <div class="row justify-content-center">
+      <div class="col-md-4 text-center">
+        <div class="card p-0 border-0 text-center">
+          <div class="card-body">
+            <a href="{% url 'profile' top_profiles.1.user.id %}">
+              <img src="{{ top_profiles.1.avatar.url }}" alt="Аватар пользователя"
+                   class="img-fluid rounded-circle mb-3 smaller-avatar">
+            </a>
+            <h5 class="card-title">{{ top_profiles.1.user.first_name }} {{ top_profiles.1.user.last_name }}</h5>
+            <p class="card-text">{{ top_profiles.1.solved_tasks }} {{ plural_tasks.1 }} выполнено</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 text-center">
+        <div class="card p-0 border-0 text-center">
+          <div class="card-body">
+            <a href="{% url 'profile' top_profiles.0.user.id %}">
+              <img src="{{ top_profiles.0.avatar.url }}" alt="Аватар пользователя"
+                   class="img-fluid rounded-circle mb-3 larger-avatar">
+            </a>
+            <h5 class="card-title">{{ top_profiles.0.user.first_name }} {{ top_profiles.0.user.last_name }}</h5>
+            <p class="card-text">{{ top_profiles.0.solved_tasks }} {{ plural_tasks.0 }} выполнено</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 text-center">
+        <div class="card p-0 border-0 text-center">
+          <div class="card-body">
+            <a href="{% url 'profile' top_profiles.2.user.id %}">
+              <img src="{{ top_profiles.2.avatar.url }}" alt="Аватар пользователя"
+                   class="img-fluid rounded-circle mb-3 smaller-avatar">
+            </a>
+            <h5 class="card-title">{{ top_profiles.2.user.first_name }} {{ top_profiles.2.user.last_name }}</h5>
+            <p class="card-text">{{ top_profiles.2.solved_tasks }} {{ plural_tasks.2 }} выполнено</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
